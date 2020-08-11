@@ -1,0 +1,10 @@
+{
+  "name": "cyphersite",
+  "version": "0.1.0",
+  "description": "CypherBot's site server ",
+  "main": "index.js",
+  "repository": "https://github.com/CypherBot/sitejs",
+  "author": "kcomain <cheunghowui@gmail.com>",
+  "license": "GPL-3.0",
+  "private": false
+}
