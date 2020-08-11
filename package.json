@@ -6,5 +6,11 @@
   "repository": "https://github.com/CypherBot/sitejs",
   "author": "kcomain <cheunghowui@gmail.com>",
   "license": "GPL-3.0",
-  "private": false
+  "private": false,
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "scripts": {
+    "start": "node index.js"
+  }
 }
