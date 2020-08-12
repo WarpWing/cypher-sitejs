@@ -2,7 +2,7 @@ const e = require('express')
 
 const app = e()
 
-app.get('/admin/queries', (req, res) => {
+app.all('/admin/queries', (req, res) => {
     let resp = "<h1><em><u>URL Query strings</u></em></h1><hr>";
     console.log(req.query);
     console.log(`query entries: ${Object.entries(req.query)}`)
