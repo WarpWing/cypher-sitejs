@@ -8,10 +8,10 @@ app.use(e.static('site/'));
 let port
 if (process.env.PORT === undefined){
     port = 8080
-} else if (typeof process.env.PORT != "number"){
-    throw new Error("PORT must be a number.")
+} else if (Number.isNaN(Number(process.env.PORT))){
+    throw new TypeError('PORT has to be a number.')
 } else {
-    port = Number(process.env.PORT)
+    port = process.env.port
 }
 
 
