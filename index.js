@@ -11,7 +11,7 @@ if (process.env.PORT === undefined){
 } else if (Number.isNaN(Number(process.env.PORT))){
     throw new TypeError('PORT has to be a number.')
 } else {
-    port = process.env.port
+    port = Number(process.env.port)
 }
 
 
