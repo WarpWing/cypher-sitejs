@@ -1,5 +1,6 @@
 const e = require('express')
 require('dotenv').config({ debug: true })
+const ejs = require('ejs')
 
 const app = e()
 
@@ -19,17 +20,28 @@ if (process.env.PORT === undefined) {
 console.log(`[app] PORT is ${port.toString()}`)
 
 app.all('/admin/queries', (req, res) => {
-    let resp = "<h1><em><u>URL Query strings</u></em></h1><hr>";
     console.log(`[app] ${req.query}`);
     console.log(`[app] query entries: ${Object.entries(req.query)}`)
+    let resp = undefined
     for (const [key, value] of Object.entries(req.query)) {
         resp += `<p><b>${key}</b>: <code>${String(value)}</code></p>`;
-        // console.log(`[app] key: ${key}, entry: ${value}`)
     }
-    res.send(resp);
+    if(resp === undefined) {
+        resp = "Nothing"
+    }
+    // console.log(`[app] key: ${key}, entry: ${value}`)
+    let t
+    ejs.renderFile('src/views/queries.ejs', {displayer: resp}, {}, (err, str) => {
+        if (err){
+            res.status(500).send({code: 500, reason: 'Unexpected server error'})
+            return
+        }
+        t = str
+    })
+    res.send(t);
 })
 
-app.post('/admin/stop', (req, res) => {
+app.all('/admin/stop', (req, res) => {
     if (req.get('content-type') !== 'application/json'){
         res.status(400)
         return res.send({code: 400, reason: 'Content-Type is not application/json'})
@@ -51,7 +63,10 @@ app.post('/admin/stop', (req, res) => {
 });
 
 app.post('/uptime', (req, res) => {
-    res.send('Work in progress.')
+    let thing = req.body
+    for (const i in thing){
+        res = 0
+    }
 })
 
 app.all('/teapot', (req, res) => {
