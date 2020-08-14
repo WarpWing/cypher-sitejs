@@ -1,3 +1,4 @@
 require('./src/app');
+require('dotenv').config()
 
-console.log('bruh')
+console.log('[*] Loaded src.app')
