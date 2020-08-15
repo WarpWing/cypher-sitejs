@@ -16,15 +16,16 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
             integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
             crossorigin="anonymous"></script>
-    <title>Query Strings</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+          integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <title><%= title %></title>
 </head>
 <body>
 <div class="container">
-    <h1><u><em><b>URL query strings</b></em></u></h1>
-    <em><i class="text-warning">Note:</i> treating empty queries as <code>true</code></em>
+    <%- header %>
     <hr>
     <p>
-        <%- displayer %>
+        <%- body %>
     </p>
 </div>
 </body>
