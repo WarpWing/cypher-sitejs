@@ -124,10 +124,10 @@ app.getAsync('/info', cache(5), async (req, res) => {
               <ul>
                 <li>Physical</li>
                 <ul>
-                  <li>Total: ${stats.mem.total} bytes (${stats.mem.total/1000000000} GB)</li>
-                  <li>Free: ${stats.mem.free} bytes (${stats.mem.free/1000000000} GB)</li>
-                  <li>Used: ${stats.mem.used} bytes (${stats.mem.used/1000000000} GB)</li>
-                  <li>Active: ${stats.mem.active} bytes (${stats.mem.active/1000000000} GB)</li>
+                  <li>Total: ${stats.mem.total} bytes (${Math.round(stats.mem.total/1000000000)} GB)</li>
+                  <li>Free: ${stats.mem.free} bytes (${Math.round(stats.mem.free/1000000000)} GB)</li>
+                  <li>Used: ${stats.mem.used} bytes (${Math.round(stats.mem.used/1000000000)} GB)</li>
+                  <li>Active: ${stats.mem.active} bytes (${Math.round(stats.mem.active/1000000000)} GB)</li>
                 </ul>
                 <li>Swap</li>
                 <ul>
