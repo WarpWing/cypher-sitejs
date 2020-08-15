@@ -20,7 +20,7 @@ module.exports = {
       host : 'cypher',
       ref  : 'origin/master',
       repo : 'https://github.com/CypherBot/sitejs',
-      path : '/home/kcomain/sitejs',
+      path : '/home/kcomain/sitejs-prod',
       'pre-deploy-local': '',
       'post-deploy' : 'npm install && pm2 reload ecosystem.config.js --env production',
       'pre-setup': ''
