@@ -138,7 +138,11 @@ app.getAsync('/info', cache(5), async (req, res) => {
               </ul>`
     stuff += `<li>OS Information</li>
               <ul>
-                <li>Platform: ${stats.os.platform} ${stats.os.arch}</li>
+                <li>Platform: <i class="${stats.os.platform === 'linux' ? 'fab fa-linux':
+                                          stats.os.platform === 'win32' ? 'fab fa-windows':
+                                          stats.os.platform === 'darwin' ? 'fab fa-apple': 
+                                          'fas fa-question'}"></i>
+                    ${stats.os.platform} ${stats.os.arch}</li>
                 <li>Name: ${stats.os.distro} ${stats.os.release} Build ${stats.os.build} ${stats.os.codename}</li>
                 <li>Kernal version: ${stats.os.kernel}</li>
                 <li>UEFI? ${stats.os.uefi ? "<span class='text-success'>Yes</span>" : 
