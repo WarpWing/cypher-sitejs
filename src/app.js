@@ -148,8 +148,12 @@ app.getAsync('/info', cache(5), async (req, res) => {
     stuff += `</ul>`
     stuff += "<hr><h6>Legal</h6>" +
         "<p class='text-muted'>" +
-        "This site(CypherBot.org) is not endorsed with any company. Any use of their trademarked" +
-        "icons are solely for the displayment of their respective operating systems and falls under their " +
+        "The Apple icon (<i class='fab fa-apple'></i>), 'Apple' are trademarks of Apple Inc., registered in the U.S. and other countries.<br>" +
+        "The Windows icon (<i class='fab fa-windows'></i>) is a trademark of Microsoft Cooperation.<br>" +
+        "Linux is a registered trademark of Linus Torvalds.<br>" +
+        "This webpage is created independently and has not been authorized, sponsored or otherwise approved by Apple Inc. and Microsoft Cooperation.<br>" +
+        "If you have any questions or if you want your logos and trademarks to be removed from this site, please contact me at " +
+        "<a href='mailto:Kenny Cheung<kcomain@member.fsf.org>'>kcomain@member.fsf.org</a>" +
         "</p>"
     let values = {
         title: 'System Statistics',
