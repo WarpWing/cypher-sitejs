@@ -14,22 +14,22 @@ module.exports = {
   deploy: {
     production: {
       user: 'kcomain',
-      host: 'cypher',
+      host: 'cyphersite',
       ref: 'origin/master',
-      repo: 'https://github.com/CypherBot/sitejs',
+      repo: 'https://github.com/tempus-dev/cypher-sitejs',
       path: '/home/kcomain/sitejs-prod',
       'pre-deploy-local': '',
-      'post-deploy': 'npm install && pm2 reload ecosystem.config.js --env production',
+      'post-deploy': 'yarn install && pm2 reload ecosystem.config.js --env production',
       'pre-setup': ''
     },
-    homeserver: {
+    alpha: {
       user: 'kcomain',
-      host: '192.168.2.16',
-      ref: 'origin/master',
-      repo: 'https://github.com/CypherBot/sitejs',
-      path: '/home/kcomain/hosting/cyphersite',
+      host: 'cyphersite',
+      ref: 'origin/develop',
+      repo: 'https://github.com/tempus-dev/cypher-sitejs',
+      path: '/home/kcomain/sitejs-develop',
       'pre-deploy-local': '',
-      'post-deploy': 'npm install && pm2 reload ecosystem.config.js --env production',
+      'post-deploy': 'yarn install && pm2 reload ecosystem.config.js',
       'pre-setup': ''
     }
   }

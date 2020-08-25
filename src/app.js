@@ -11,7 +11,8 @@ const cookieParser = require('cookie-parser')
 const { addAsync } = require('@awaitjs/express')
 const sha256 = require('js-sha256').sha256
 const utils = require('./utils')
-
+const fetch = require('node-fetch')
+const moment = require('moment')
 
 // let keys = []
 // for (let i = 0; i<10; i++){
@@ -19,7 +20,8 @@ const utils = require('./utils')
 // }
 // console.dir(keys)
 
-const app = addAsync(e())  // Add async support for express because i'm an idiot and don't want callback hell
+const start = new Date()
+const app = addAsync(e()) // Add async support for express because i'm an idiot and don't want callback hell
 // app.use(e.static('site/'));  // Don't need it when using nginx as static server
 app.use(e.json()) // for parsing application/json
 app.use(e.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
@@ -30,6 +32,14 @@ const mongo = new mongod.MongoClient(process.env.mongourl)
 //     sameSite: true,
 //     maxAge: 60 * 30  // Users have half an hour to do their thing
 // }))
+
+const oauth_url = {
+    discord: {
+        authorize: 'https://discord.com/api/oauth2/authorize',
+        token: 'https://discord.com/api/oauth2/token',
+        revoke: 'https://discord.com/api/oauth2/token/revoke'
+    }
+}
 
 let port
 if (process.env.PORT === undefined) {
@@ -61,13 +71,14 @@ const cache = (duration) => {
     }
 }
 
+// ======    /admin    ======
 app.all('/admin/queries', (req, res) => {
     console.log(`[app] ${req.query}`)
     console.log(`[app] query entries: ${Object.entries(req.query)}`)
     let resp = ''
     for (const [key, value] of Object.entries(req.query)) {
         resp += `<p><b>${key}</b>: <code>
-                    ${value === '' ? "<span class='text-success'>true</span>" : String(value)}
+                    ${value === '' ? '<span class=\'text-success\'>true</span>' : String(value)}
                  </code></p>`
     }
     if (resp === '') {
@@ -105,11 +116,48 @@ app.all('/admin/stop', (req, res) => {
     }
 })
 
-app.post('/uptime', (req, res) => {
-    const thing = req.body
-    for (const i in thing) {
-        res = 0
+// ======    /    ======
+
+app.all('/uptime', (req, res) => {
+    let data = si.time()
+    res.send({
+        node_uptime: {
+            seconds: moment().diff(start, 'seconds', true),
+            minutes: moment().diff(start, 'minutes', true),
+            hours: moment().diff(start, 'hours', true),
+            days: moment().diff(start, 'days', true),
+            months: moment().diff(start, 'months', true)
+        },
+        system_uptime: {
+            seconds: moment().diff(Date.now()-data.uptime*1000, 'seconds', true),
+            minutes: moment().diff(Date.now()-data.uptime*1000, 'minutes', true),
+            hours: moment().diff(Date.now()-data.uptime*1000, 'hours', true),
+            days: moment().diff(Date.now()-data.uptime*1000, 'days', true),
+            months: moment().diff(Date.now()-data.uptime*1000, 'months', true)
+        }
+        // debug: {
+        //     data,
+        //     deducted: Date.now()-data.uptime,
+        //     deducted_time: moment(Date.now()-data.uptime)
+        // }
+    })
+})
+
+app.all('/wip', (req, res) => {
+    const options = {
+        title: "Work in progress",
+        header: "<h1>This page is a work in progress!</h1>",
+        body: "<a href='/' role='button' class='btn btn-primary'><i class='fas fa-home'></i> Go Home</a> " +
+            "<a href='mailto:kcomain@cypherbot.org' role='button' class='btn btn-success'><i class='fas fa-at'></i> Send hatemail to developer</a>"
     }
+    ejs.renderFile('src/views/pages.ejs', options, {}, (err, str) => {
+        if (err) {
+            res.status(500).send({ code: 500, reason: 'Unexpected server error', error: err })
+            console.dir(err)
+            return
+        }
+        res.send(str)
+    })
 })
 
 app.all('/teapot', (req, res) => {
@@ -120,7 +168,7 @@ app.all('/teapot', (req, res) => {
                         background-size: 30%;
                     }
                  </style>`
-    res.send(style + "<h1 style='color: #ffffff;'><b><u><em>I'm a teapot</em></u></b><br></h1>Tip me over and pour me out.")
+    res.send(style + '<h1 style=\'color: #ffffff;\'><b><u><em>I\'m a teapot</em></u></b><br></h1>Tip me over and pour me out.')
 })
 
 app.getAsync('/sysinfo', cache(5), async (req, res) => {
@@ -171,19 +219,19 @@ app.getAsync('/sysinfo', cache(5), async (req, res) => {
                     ${stats.os.platform} ${stats.os.arch}</li>
                 <li>Name: ${stats.os.distro} ${stats.os.release} Build ${stats.os.build} ${stats.os.codename}</li>
                 <li>Kernal version: ${stats.os.kernel}</li>
-                <li>UEFI? ${stats.os.uefi ? "<span class='text-success'>Yes</span>"
-        : "<span class='text-error'>No</span>"}</li>
+                <li>UEFI? ${stats.os.uefi ? '<span class=\'text-success\'>Yes</span>'
+        : '<span class=\'text-error\'>No</span>'}</li>
                 <li>Hostname: ${stats.os.hostname}</li>
               </ul>`
     stuff += '</ul>'
     stuff += '<hr><h6>Legal</h6>' +
-        "<p class='text-muted'>" +
-        "The Apple icon (<i class='fab fa-apple'></i>), 'Apple' are trademarks of Apple Inc., registered in the U.S. and other countries.<br>" +
-        "The Windows icon (<i class='fab fa-windows'></i>) is a trademark of Microsoft Cooperation.<br>" +
+        '<p class=\'text-muted\'>' +
+        'The Apple icon (<i class=\'fab fa-apple\'></i>), \'Apple\' are trademarks of Apple Inc., registered in the U.S. and other countries.<br>' +
+        'The Windows icon (<i class=\'fab fa-windows\'></i>) is a trademark of Microsoft Cooperation.<br>' +
         'Linux is a registered trademark of Linus Torvalds.<br>' +
         'This webpage is created independently and has not been authorized, sponsored or otherwise approved by Apple Inc. or Microsoft Cooperation.<br>' +
         'If you have any questions or if you want your logos and trademarks to be removed from this site, please contact me at ' +
-        "<a href='mailto:Kenny Cheung<kcomain@cypherbot.org>'>kcomain@cypherbot.org</a>" +
+        '<a href=\'mailto:Kenny Cheung<kcomain@cypherbot.org>\'>kcomain@cypherbot.org</a>' +
         '</p>'
     const values = {
         title: 'System Statistics',
@@ -200,9 +248,15 @@ app.getAsync('/sysinfo', cache(5), async (req, res) => {
     })
 })
 
+// ======    /oauth    ======
+
 // noinspection JSUnresolvedVariable
 app.getAsync('/oauth/discord/', async (req, res) => {
-    if (req.query.code === undefined) {
+    const redir = encodeURIComponent(req.protocol + '://' + req.get('host') + req.path + ((req.path[req.path.length - 1] === '/') ? '' : '/'))
+    console.dir(`Redir: ${encodeURIComponent(req.protocol + '://' + req.get('host') + req.path + ((req.path[req.path.length - 1] === '/') ? '' : '/'))}`)
+    if (1 !== 1) {
+        // wip
+    } else if (req.query.code === undefined) {
         const state = utils.random(10)
         res.cookie('sessionhash', sha256(state), {
             maxAge: 60 * 30 * 1000,
@@ -212,31 +266,59 @@ app.getAsync('/oauth/discord/', async (req, res) => {
             httpOnly: true
         })
             .redirect('https://discord.com/api/oauth2/authorize?' +
-                `client_id=${process.env.cid}` +
-                `redirect_uri=${encodeURIComponent(req.protocol + '://' + req.get('host') + req.originalUrl)}&` +
+                `client_id=${process.env.cid}&` +
+                `redirect_uri=${redir}&` +
                 'response_type=code&' +
                 'scope=identify%20guilds%20email&' +
-                'prompt=none' +
+                'prompt=none&' +
                 `state=${state}`
             )
         console.log('Cookie saved? check headers')
         console.log(`Session: ${state}`)
+        console.log(`Redir[authstart]: ${redir}`)
     } else {
         // Probably returned from oauth site.
         console.dir(req.signedCookies)
         if (req.query.state === undefined) { // require state to be provided
             res.status(400).send('State is not provided?')
         } else if (req.signedCookies.sessionhash !== sha256(req.query.state)) {
-            res.status(400).send('Invalid session state')
+            res.status(400).send('Invalid session state <a onclick="window.history.go(-2)" href="#">Go back?</a>' +
+                ` <a href=${decodeURIComponent(redir).split(/\?/)[0]}>Retry?</a>`)
         } else {
             res.clearCookie('sessionhash')
             // First get the thing yes wait a bit ok
-            const tokenres = await fetch()
-            mongo.connect((err, client) => {
-                const col = client.db('Cypher').collection('data')
+            const urlparams = new URLSearchParams({
+                client_id: process.env.cid,
+                client_secret: process.env.csec,
+                grant_type: 'authorization_code',
+                code: req.query.code,
+                redirect_uri: decodeURIComponent(redir), // encodeURIComponent(req.protocol + '://' + req.get('host') + req.originalUrl.split(/\?/)[0]),
+                scope: 'identify guilds email'
             })
+            // const fheaders = urlparams.getHeaders()
+            const tokenres = await fetch(oauth_url.discord.token, {
+                body: urlparams,
+                method: 'post'
+            })
+            const resjson = await tokenres.json()
+            // console.dir(tokenres)
+            if (tokenres.status === 400) {
+                res.send(resjson)
+            }
+            // let client = await mongo.connect()
+            // await client.insertOne()
             // .redirect('/oauth/discord/success')
             // res.status(200).send("ok")
+            const visualizerurl = new URL(req.protocol + '://' + req.get('host'))
+            visualizerurl.pathname = '/admin/queries'
+            visualizerurl.search = new URLSearchParams(resjson).toString()
+            if (process.env.NODE_ENV === 'development') {
+                res.send(`Authentication Complete. <br><h2>DEBUG:</h2>${JSON.stringify(resjson)}<br>` +
+                    `<a href="${visualizerurl}">See in queries visualizer</a>`
+                )
+            } else {
+                res.redirect('/wip')
+            }
         }
     }
 })
