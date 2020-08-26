@@ -19,6 +19,7 @@
     "js-sha256": "^0.9.0",
     "jslint": "^0.12.1",
     "keygrip": "^1.1.0",
+    "luxon": "^1.25.0",
     "memory-cache": "^0.2.0",
     "moment": "^2.27.0",
     "mongodb": "^3.6.0",
@@ -26,7 +27,9 @@
     "systeminformation": "^4.26.10"
   },
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "lint": "npx eslint .",
+    "fix": "yarn lint --fix"
   },
   "devDependencies": {
     "eslint": "^7.7.0"

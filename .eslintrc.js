@@ -1,40 +1,24 @@
 module.exports = {
-    'env': {
-        'node': true,
-        'commonjs': true,
-        'es2020': true
-    },
+    'env': { 'node': true, 'commonjs': true, 'es2020': true },
     'extends': 'eslint:recommended',
-    'parserOptions': {
-        'ecmaVersion': 12
-    },
+    'parserOptions': { 'ecmaVersion': 12 },
     'rules': {
         'accessor-pairs': 'error',
         'array-bracket-newline': 'error',
-        'array-bracket-spacing': [
-            'error',
-            'never'
-        ],
+        'array-bracket-spacing': ['error', 'never'],
         'array-callback-return': 'error',
         'array-element-newline': 'off',
         'arrow-body-style': 'off',
-        'arrow-parens': [
-            'error',
-            'always'
-        ],
+        'arrow-parens': ['error', 'always'],
         'arrow-spacing': [
-            'error',
-            {
+            'error', {
                 'after': true,
                 'before': true
             }
         ],
         'block-scoped-var': 'error',
         'block-spacing': 'error',
-        'brace-style': [
-            'error',
-            '1tbs'
-        ],
+        'brace-style': ['error', '1tbs'],
         'callback-return': 'off',
         'camelcase': 'off',
         'capitalized-comments': 'off',
@@ -73,8 +57,8 @@ module.exports = {
         'func-name-matching': 'error',
         'func-names': 'error',
         'func-style': [
-            'error',
-            'expression'
+            'off' // ,
+            // 'expression'
         ],
         'function-paren-newline': 'off',
         'generator-star-spacing': 'error',
@@ -110,7 +94,7 @@ module.exports = {
         'max-classes-per-file': 'error',
         'max-depth': 'error',
         'max-len': 'off',
-        'max-lines': 'error',
+        'max-lines': 'off',
         'max-lines-per-function': 'off',
         'max-nested-callbacks': 'error',
         'max-params': 'error',
@@ -128,7 +112,7 @@ module.exports = {
         'newline-per-chained-call': 'error',
         'no-alert': 'error',
         'no-array-constructor': 'error',
-        'no-await-in-loop': 'error',
+        'no-await-in-loop': 'warn',
         'no-bitwise': 'error',
         'no-buffer-constructor': 'error',
         'no-caller': 'error',
@@ -308,4 +292,4 @@ module.exports = {
             'never'
         ]
     }
-};
+}

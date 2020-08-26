@@ -1,6 +1,6 @@
 # sitejs
 
-The express server for the cypher bot website
+The backend server for the cypher bot website
 
 ## Configuration
 1. install dependencies with ``yarn install``
