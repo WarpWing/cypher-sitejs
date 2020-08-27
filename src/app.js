@@ -14,6 +14,7 @@ const utils = require('./utils')
 const fetch = require('node-fetch')
 const moment = require('moment')
 const luxon = require('luxon')
+const debug = require('debug')
 
 // let keys = []
 // for (let i = 0; i<10; i++){
@@ -31,12 +32,29 @@ const mongoOptions = {
     socketOptions: { keepAlive: 1, connectTimeoutMS: 30000 }
     // replset: { socketOptions: { keepAlive: 1, connectTimeoutMS: 30000 } }
 }
+const loggers = {
+    http: debug('http'),
+    express: debug('express'),
+}
+loggers.app = loggers.http.extend('app')
+loggers.oauth = loggers.http.extend('oauth')
+if (process.env.DEBUG){
+    debug.enable('*')
+}
+// noinspection JSCheckFunctionSignatures
 const mongo = new mongod.MongoClient(process.env.mongourl, mongoOptions)
 // app.use(cookieSession({
 //     keys: Keygrip(keys),
 //     sameSite: true,
 //     maxAge: 60 * 30  // Users have half an hour to do their thing
 // }))
+
+const logReqs = (req, res, next) => {
+    loggers.http(`${req.ip} ${req.method} ${req.originalUrl}`)
+    next()
+}
+
+app.use(logReqs)
 
 const urls = {
     discord: {
@@ -56,7 +74,7 @@ if (process.env.PORT === undefined) {
     port = Number(process.env.PORT)
 }
 
-console.log(`[app] PORT is ${port.toString()}`)
+loggers.app(`[app] PORT is ${port.toString()}`)
 
 // noinspection UnnecessaryReturnStatementJS
 const cache = (duration) => {
@@ -79,8 +97,6 @@ const cache = (duration) => {
 
 // ======    /admin    ======
 app.all('/admin/queries', (req, res) => {
-    console.log(`[app] ${req.query}`)
-    console.log(`[app] query entries: ${Object.entries(req.query)}`)
     let resp = ''
     for (const [key, value] of Object.entries(req.query)) {
         resp += `<p><b>${key}</b>: <code>
@@ -90,7 +106,6 @@ app.all('/admin/queries', (req, res) => {
     if (resp === '') {
         resp = 'Nothing'
     }
-    // console.log(`[app] key: ${key}, entry: ${value}`)
     const values = {
         title: 'Query Strings',
         header: '<h1><u><em><b>URL query strings</b></em></u></h1>' +
@@ -113,7 +128,7 @@ app.all('/admin/stop', (req, res) => {
     }
     if (req.body.key === process.env.stoppass) {
         res.status(200).send('👋')
-        console.log('[app] stopping server')
+        loggers.express('[app] stopping server')
         process.exit(0)
     } else if (req.body.key === undefined) {
         res.status(401).send({ code: 401, reason: 'No passkey is given.' })
@@ -164,7 +179,6 @@ app.all('/wip', (req, res) => {
     ejs.renderFile('src/views/pages.ejs', options, {}, (err, str) => {
         if (err) {
             res.status(500).send({ code: 500, reason: 'Unexpected server error', error: err })
-            console.dir(err)
             return
         }
         res.send(str)
@@ -252,7 +266,6 @@ app.getAsync('/sysinfo', cache(5), async (req, res) => {
     ejs.renderFile('src/views/pages.ejs', values, {}, (err, str) => {
         if (err) {
             res.status(500).send({ code: 500, reason: 'Unexpected server error', error: err })
-            console.dir(err)
             return
         }
         res.send(str)
@@ -265,7 +278,7 @@ app.getAsync('/sysinfo', cache(5), async (req, res) => {
 app.getAsync('/oauth/discord/', async (req, res) => {
     const redir = encodeURIComponent(req.protocol + '://' + req.get('host') + req.path + ((req.path[req.path.length - 1] === '/') ? '' : '/'))
     if (process.env.NODE_ENV === 'development') {
-        console.dir(`Redir: ${encodeURIComponent(req.protocol + '://' + req.get('host') +
+        loggers.oauth(`Redir: ${encodeURIComponent(req.protocol + '://' + req.get('host') +
             req.path + ((req.path[req.path.length - 1] === '/') ? '' : '/'))}`)
     }
 
@@ -288,12 +301,12 @@ app.getAsync('/oauth/discord/', async (req, res) => {
                 'prompt=none&' +
                 `state=${state}`
             )
-        console.log('Cookie saved? check headers')
-        console.log(`Session: ${state}`)
-        console.log(`Redir[authstart]: ${redir}`)
+        loggers.oauth('Cookie saved? check headers')
+        loggers.oauth(`Session: ${state}`)
+        loggers.oauth(`Redir[authstart]: ${redir}`)
     } else {
         // Probably returned from oauth site.
-        console.dir(req.signedCookies)
+        loggers.app(req.signedCookies)
         if (req.query.state === undefined) { // require state to be provided
             res.status(400).send('State is not provided?')
         } else {
@@ -319,7 +332,6 @@ app.getAsync('/oauth/discord/', async (req, res) => {
                     method: 'post'
                 })
                 const resjson = await tokenres.json()
-                // console.dir(tokenres)
                 if (tokenres.status === 400) {
                     res.send(resjson)
                 }
@@ -332,10 +344,10 @@ app.getAsync('/oauth/discord/', async (req, res) => {
                 const udata = await uinfo.json()
                 const udbdata = await data.findOne()
                 if (udbdata !== null && udbdata.expiry > Number(new Date())) {
-                    console.log('User is already in db and it not expired yet, just redirect and set cookie')
+                    loggers.oauth('User is already in db and it not expired yet, just redirect and set cookie')
                     res.redirect('/wip')
                 } else {
-                    console.dir(uinfo)
+                    // loggers.app(uinfo)
                     // noinspection JSUnresolvedVariable
                     await data.insertOne({
                         uid: udata.id,
@@ -378,7 +390,7 @@ app.post('/webhook/updown', (req, res) => {
                     `Next check: ${moment(i.check.next_check_at).format()} (${nextcheck})\n`+
                     `Now more json \`\`\`json\n${JSON.stringify(i)}\n\`\`\``
             }
-            console.log(`Sending item:\n${content}`)
+            loggers.app(`Sending item:\n${content}`)
             // noinspection JSUnresolvedFunction
             fetch('https://canary.discordapp.com/api/webhooks/743749236008550411/02NDk07lIja13bUOYsUg0ZA-u-CjbA6_-ECpewgPGRSG7NpwEk0B60wyrWsPZ4Wm6ARw', {
                 method: 'post',
@@ -387,8 +399,8 @@ app.post('/webhook/updown', (req, res) => {
                     'Content-Type': 'application/json'
                 }
             }).then((data) => data.text().then((thing) => {
-                console.log(thing);
-                console.log(`Status: ${data.status}`)
+                loggers.app(thing);
+                loggers.app(`Status: ${data.status}`)
             }))
         } catch (err) {
             // noinspection JSUnresolvedFunction
@@ -409,14 +421,14 @@ app.all(/^\/backend\/?.*$/, (req, res) => {
 })
 
 const server = app.listen(port, () => {
-    console.log(`[app] Started listening to port ${port}`)
+    loggers.app(`Started listening to port ${port}`)
 })
 
 const tmin = false
 
 process.on('SIGTERM', () => {
     if (!tmin) {
-        console.debug('\nReceived SIGTERM, closing server. (send the signal again to force kill)')
+        loggers.app('\nReceived SIGTERM, closing server. (send the signal again to force kill)')
         server.close()
         process.exit(0)
     } else {
@@ -426,7 +438,7 @@ process.on('SIGTERM', () => {
 })
 process.on('SIGINT', () => {
     if (!tmin) {
-        console.debug('\nReceived signal SIGINT, terminating. (send the signal again to force kill)')
+        loggers.app('\nReceived signal SIGINT, terminating. (send the signal again to force kill)')
         server.close()
         process.exit(0)
     } else {
