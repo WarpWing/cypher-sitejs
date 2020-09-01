@@ -34,11 +34,11 @@ const mongoOptions = {
 }
 const loggers = {
     http: debug('http'),
-    express: debug('express'),
+    express: debug('express')
 }
 loggers.app = loggers.http.extend('app')
 loggers.oauth = loggers.http.extend('oauth')
-if (process.env.DEBUG){
+if (process.env.DEBUG) {
     debug.enable('*')
 }
 // noinspection JSCheckFunctionSignatures
@@ -382,12 +382,12 @@ app.post('/webhook/updown', (req, res) => {
     // const events = []
     for (const i in req.body) {
         try {
-            const downtime = luxon.Duration.fromMillis(i.downtime.duration*1000).toFormat("m 'minutes' s 'seconds'")
-            const nextcheck = luxon.Duration.fromMillis(Date.parse(i.check.next_check_at)-Date.now()).toFormat("m 'minutes' s 'seconds'")
+            const downtime = luxon.Duration.fromMillis(i.downtime.duration * 1000, {}).toFormat('m \'minutes\' s \'seconds\'')
+            const nextcheck = luxon.Duration.fromMillis(Date.parse(i.check.next_check_at) - Date.now(), {}).toFormat('m \'minutes\' s \'seconds\'')
             const content = {
                 content: `<@397029587965575170> Thy site ${i.check.url} ist ${(i.event === 'check.down') ? 'down' : 'up'}\n` +
                     `It is down since uh ${moment().fromNow(i.check.down_since)} ${(!i.check.down) ? `and it's now up. (down for ${downtime})` : ''} \n` +
-                    `Next check: ${moment(i.check.next_check_at).format()} (${nextcheck})\n`+
+                    `Next check: ${moment(i.check.next_check_at).format()} (${nextcheck})\n` +
                     `Now more json \`\`\`json\n${JSON.stringify(i)}\n\`\`\``
             }
             loggers.app(`Sending item:\n${content}`)
@@ -409,7 +409,7 @@ app.post('/webhook/updown', (req, res) => {
                 body: JSON.stringify({
                     content: '<@397029587965575170> ey your code broke come check error here \n' + err.toString()
                 })
-            }).then()
+            }).then(() => console.log(err))
         }
     }
     res.send('OK') // + events)
@@ -424,11 +424,31 @@ const server = app.listen(port, () => {
     loggers.app(`Started listening to port ${port}`)
 })
 
-const tmin = false
+// 404-y handler
+app.use((req, res, next) => {
+    loggers.app(`${req.ip} ${req.method} ${req.originalUrl}: (probably) not found.`)
+    res.status(404).send('<h1 style="color: #f45d5b;">404 Not found.</h1><br>Whoops! This is an invalid page. Wanna ' +
+        '<a href="#" onclick="window.history.go(-1) role=\'button\'">go back?</a> ooor ' +
+        '<a href="/" role=\'button\'>go home?</a> oooooor ' +
+        `<button onclick="alert('cyka blyat idi nahui')">call vadim</button><br>` +
+        `If you think this page should exist, please contact developer at <a href="mailto:<kcomain@cypherbot.org>">kcomain@cypherbot.org</a>, or dm kcomain#2020 on discord.` +
+        "<hr><i>This page is a temporary 404 page. Expect this page to change sooooooon.</i><br>"
+    )
+})
+/*
+====================================================
+|                      Notice                      |
+|--------------------------------------------------|
+| You probably would want to add routes above this |
+| block, since it might break the 404 catcher.     |
+====================================================
+ */
+let tmin = false
 
 process.on('SIGTERM', () => {
     if (!tmin) {
         loggers.app('\nReceived SIGTERM, closing server. (send the signal again to force kill)')
+        tmin = true
         server.close()
         process.exit(0)
     } else {
@@ -436,9 +456,11 @@ process.on('SIGTERM', () => {
         process.exit(255)
     }
 })
+
 process.on('SIGINT', () => {
     if (!tmin) {
         loggers.app('\nReceived signal SIGINT, terminating. (send the signal again to force kill)')
+        tmin = true
         server.close()
         process.exit(0)
     } else {

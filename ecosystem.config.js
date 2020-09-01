@@ -4,17 +4,23 @@ module.exports = {
             script: 'index.js',
             watch: '.',
             instances: 4,
-            exec_mode: 'cluster'
+            exec_mode: 'cluster',
+            env: {
+                NODE_ENV: 'development',
+                DEBUG: 1,
+                PORT: 8081
+            },
+            env_production: {
+                NODE_ENV: 'production',
+                PORT: 8080
+            },
+            env_dev: {
+                NODE_ENV: 'development',
+                DEBUG: 1,
+                PORT: 8080
+            },
         }
     ],
-    env: {
-        NODE_ENV: 'development',
-        PORT: 8081
-    },
-    env_production: {
-        NODE_ENV: 'production',
-        PORT: 8080
-    },
     deploy: {
         production: {
             user: 'kcomain',
