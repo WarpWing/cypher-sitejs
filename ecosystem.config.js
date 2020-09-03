@@ -5,6 +5,7 @@ module.exports = {
             watch: '.',
             instances: 4,
             exec_mode: 'cluster',
+            max_memory_restart: '500M',
             env: {
                 NODE_ENV: 'development',
                 DEBUG: 1,
@@ -32,14 +33,14 @@ module.exports = {
             'post-deploy': 'yarn install && pm2 reload ecosystem.config.js --env production',
             'pre-setup': ''
         },
-        alpha: {
+        beta: {
             user: 'kcomain',
             host: 'cyphersite',
             ref: 'origin/develop',
             repo: 'https://github.com/tempus-dev/cypher-sitejs',
             path: '/home/kcomain/sitejs-develop',
             'pre-deploy-local': '',
-            'post-deploy': 'yarn install && pm2 reload ecosystem.config.js',
+            'post-deploy': 'yarn install && pm2 reload ecosystem.config.js --env dev',
             'pre-setup': ''
         }
     }
