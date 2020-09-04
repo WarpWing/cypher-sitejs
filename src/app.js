@@ -367,10 +367,10 @@ app.getAsync('/oauth/discord/', async (req, res) => {
                     res.send(`Authentication Complete. <br><h2>DEBUG:</h2>${JSON.stringify(resjson)}<br>` +
                         `<a href="${visualizerurl}">See in queries visualizer</a><br>
                          <ul><li>Expiry Date: ${moment()} ()</li></ul>
-`
+                        `
                     )
                 } else {
-                    res.redirect('/wip')
+                    res.redirect('/pages/success')
                 }
             }
         }

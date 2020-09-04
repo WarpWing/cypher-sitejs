@@ -23,6 +23,6 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - run: node -v
-      - run: npm i -g yarn npx
+      - run: npm i -g yarn npx --force
       - run: yarn install --production=false --frozen-lockfile
       - run: npx eslint .
