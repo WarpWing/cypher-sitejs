@@ -425,24 +425,25 @@ const server = app.listen(port, () => {
 })
 
 // 404-y handler
-app.use((req, res, next) => {
+app.use((req, res) => {
     loggers.app(`${req.ip} ${req.method} ${req.originalUrl}: (probably) not found.`)
     res.status(404).send('<h1 style="color: #f45d5b;">404 Not found.</h1><br>Whoops! This is an invalid page. Wanna ' +
         '<a href="#" onclick="window.history.go(-1) role=\'button\'">go back?</a> ooor ' +
         '<a href="/" role=\'button\'>go home?</a> oooooor ' +
-        `<button onclick="alert('cyka blyat idi nahui')">call vadim</button><br>` +
-        `If you think this page should exist, please contact developer at <a href="mailto:<kcomain@cypherbot.org>">kcomain@cypherbot.org</a>, or dm kcomain#2020 on discord.` +
-        "<hr><i>This page is a temporary 404 page. Expect this page to change sooooooon.</i><br>"
+        '<button onclick="alert(\'cyka blyat idi nahui\')">call vadim</button><br>' +
+        'If you think this page should exist, please contact developer at <a href="mailto:<kcomain@cypherbot.org>">kcomain@cypherbot.org</a>, or dm kcomain#2020 on discord.' +
+        '<hr><i>This page is a temporary 404 page. Expect this page to change sooooooon.</i><br>'
     )
 })
-/*
-====================================================
-|                      Notice                      |
-|--------------------------------------------------|
-| You probably would want to add routes above this |
-| block, since it might break the 404 catcher.     |
-====================================================
- */
+
+//
+// ====================================================
+// |                      Notice                      |
+// |--------------------------------------------------|
+// | You probably would want to add routes above this |
+// | block, since it might break the 404 catcher.     |
+// ====================================================
+//
 let tmin = false
 
 process.on('SIGTERM', () => {

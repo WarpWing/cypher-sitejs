@@ -19,7 +19,7 @@ module.exports = {
                 NODE_ENV: 'development',
                 DEBUG: 1,
                 PORT: 8081
-            },
+            }
         }
     ],
     deploy: {
