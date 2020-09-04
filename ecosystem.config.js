@@ -18,7 +18,7 @@ module.exports = {
             env_dev: {
                 NODE_ENV: 'development',
                 DEBUG: 1,
-                PORT: 8080
+                PORT: 8081
             },
         }
     ],
