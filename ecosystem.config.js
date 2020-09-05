@@ -1,6 +1,7 @@
 module.exports = {
     apps: [
         {
+            name: "cy-backend",
             script: 'index.js',
             watch: '.',
             instances: 4,
