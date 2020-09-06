@@ -35,7 +35,7 @@ jobs:
             docker build . --file Dockerfile
           fi
 
-  # Push image to GitHub Packages.
+  # Push image to dockerhub
   # See also https://docs.docker.com/docker-hub/builds/
   push:
     # Ensure test job passes before pushing image.
@@ -50,11 +50,11 @@ jobs:
       - name: Build image
         run: docker build . --file Dockerfile --tag $IMAGE_NAME
 
-      - name: Log into GitHub Container Registry
+      - name: Log into Docker hub
       # PAT with `read:packages` and `write:packages` scopes
-        run: echo "${{ secrets.CR_PAT }}" | docker login -u kcomain --password-stdin
+        run: echo "${{ secrets.DOCKER_ACCESS }}" | docker login -u kcomain --password-stdin
 
-      - name: Push image to GitHub Container Registry
+      - name: Push image to Dockerhub
         run: |
           # !!== had to use ext repo, using the org repo just breaks ==!!
           # IMAGE_ID=ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME
