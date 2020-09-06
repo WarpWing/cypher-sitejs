@@ -3,16 +3,16 @@ version: "3.7"
 services: 
     app:
         image: node:latest
-        command: |
-            npm install pm2 -g
-            mkdir -p /usr/src/cypher-backend
-            cd /usr/src/cypher-backend
-            yarn install --production
-            pm2-runtime ecosystem.config.js --env production
+        command: | 
+            bash -c "
+            npm install pm2 -g &&
+            mkdir -p /usr/src/cypher-backend &&
+            yarn install --production && 
+            ls -la &&
+            pm2-runtime ./ecosystem.config.js --env production"
+        working_dir: /usr/src/cypher-backend
         volumes: 
-            - "/var/www/:"
+            - ./:/usr/src/cypher-backend
+            - "/var/www/cypher:/usr/src/static-site"
         ports: 
             - "9080:8080"
-
-
-# INCOMPLETE DO NOT USE
