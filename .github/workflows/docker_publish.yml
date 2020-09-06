@@ -52,13 +52,13 @@ jobs:
 
       - name: Log into GitHub Container Registry
       # PAT with `read:packages` and `write:packages` scopes
-        run: echo "${{ secrets.CR_PAT }}" | docker login https://ghcr.io -u ${{ github.actor }} --password-stdin
+        run: echo "${{ secrets.CR_PAT }}" | docker login -u kcomain --password-stdin
 
       - name: Push image to GitHub Container Registry
         run: |
-          # !!== had to use own repo, using the org repo just breaks ==!!
+          # !!== had to use ext repo, using the org repo just breaks ==!!
           # IMAGE_ID=ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME
-          IMAGE_ID=ghcr.io/kcomain/$IMAGE_NAME
+          IMAGE_ID=kcomain/$IMAGE_NAME
 
           # Change all uppercase to lowercase
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
