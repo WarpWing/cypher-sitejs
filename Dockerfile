@@ -1,4 +1,6 @@
 FROM node:latest
+LABEL maintainer="kcomain@member.fsf.org"
+
 RUN npm install pm2 -g
 
 # make a place to put the stuff in
