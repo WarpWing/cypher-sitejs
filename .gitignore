@@ -120,3 +120,7 @@ dist
 .vsc/
 .vs/
 .atom/
+
+# Credentials
+creds.json
+docker_token.key
