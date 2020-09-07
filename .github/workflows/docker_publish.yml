@@ -15,8 +15,8 @@ jobs:
     - name: Publish to Github Packages Registry
       uses: elgohr/Publish-Docker-Github-Action@master
       with:
-        name: ${{ secrets.ACTOR }}/cypher-backend
-        registry: ghcr.io
+        name: ${{ secrets.ACTOR }}/cypher-sitejs/cypher-backend
+        registry: docker.pkg.github.com
         username: ${{ github.ACTOR }}
         password: ${{ secrets.CR_PAT }}
         dockerfile: Dockerfile
