@@ -25,7 +25,7 @@
     "moment": "^2.27.0",
     "mongodb": "^3.6.2",
     "node-fetch": "^2.6.1",
-    "systeminformation": "^4.27.3"
+    "systeminformation": "^4.27.4"
   },
   "scripts": {
     "start": "node index.js",
