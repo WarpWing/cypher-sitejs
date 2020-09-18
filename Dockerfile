@@ -1,6 +1,6 @@
 FROM node:latest
 LABEL maintainer="kcomain@member.fsf.org"
-# Define workdir
+# Define Workdir
 WORKDIR '/usr/src/cypher-backend'
 #Copy Section 
 COPY package.json yarn.lock /usr/src/cypher-backend/
