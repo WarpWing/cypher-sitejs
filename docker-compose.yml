@@ -13,6 +13,6 @@ services:
         working_dir: /usr/src/cypher-backend
         volumes: 
             - ./:/usr/src/cypher-backend
-            - "/var/www/cypher:/usr/src/static-site"
+            - "site:/usr/src/static-site"
         ports: 
             - "9080:8080"
