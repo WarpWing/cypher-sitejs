@@ -1,6 +1,5 @@
 FROM node:latest
 LABEL maintainer="kcomain@member.fsf.org"
-#Revamping of kcomain's Dockerfile
 # Define workdir
 WORKDIR '/usr/src/cypher-backend'
 #Copy Section 
