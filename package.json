@@ -35,6 +35,6 @@
     "fix": "yarn lint --fix"
   },
   "devDependencies": {
-    "eslint": "^7.8.1"
+    "eslint": "^7.9.0"
   }
 }
